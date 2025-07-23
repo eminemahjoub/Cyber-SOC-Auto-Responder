@@ -332,5 +332,4 @@ For support and questions:
 
 **⚡ Dramatically reduce Mean Time to Response (MTTR) with intelligent automation**
 
-Built with ❤️ for the cybersecurity community #   C y b e r - S O C - A u t o - R e s p o n d e r  
- 
+Built with ❤️ for the cybersecurity community #
