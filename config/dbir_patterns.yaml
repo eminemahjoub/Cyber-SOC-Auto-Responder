@@ -1,0 +1,178 @@
+# 2024 Verizon DBIR Incident Patterns for Threat Intelligence
+# Reference: Verizon 2024 Data Breach Investigations Report
+
+incident_patterns:
+  
+  # System Intrusion Pattern
+  system_intrusion:
+    description: "External adversaries using various attack vectors to gain unauthorized access"
+    base_score: 7.5
+    indicators:
+      - "lateral_movement"
+      - "credential_theft"
+      - "remote_access_tools"
+      - "backdoor_installation"
+      - "privilege_escalation"
+    common_assets:
+      - "servers"
+      - "user_devices"
+      - "databases"
+    time_to_discovery_days: 16
+    
+  # Social Engineering Pattern  
+  social_engineering:
+    description: "Human-centric attacks including phishing and pretexting"
+    base_score: 6.8
+    indicators:
+      - "phishing_email"
+      - "credential_harvesting"
+      - "business_email_compromise"
+      - "pretexting"
+      - "baiting"
+    common_assets:
+      - "email_servers"
+      - "user_devices"
+      - "web_applications"
+    time_to_discovery_days: 12
+    
+  # Basic Web Application Attacks
+  web_application_attacks:
+    description: "Attacks targeting web applications and services"
+    base_score: 6.2
+    indicators:
+      - "sql_injection"
+      - "cross_site_scripting"
+      - "authentication_bypass"
+      - "path_traversal"
+      - "command_injection"
+    common_assets:
+      - "web_applications"
+      - "databases"
+      - "web_servers"
+    time_to_discovery_days: 8
+    
+  # Denial of Service
+  denial_of_service:
+    description: "Attacks aimed at disrupting availability of systems or services"
+    base_score: 5.5
+    indicators:
+      - "traffic_flooding"
+      - "resource_exhaustion"
+      - "application_layer_dos"
+      - "protocol_exploitation"
+    common_assets:
+      - "web_servers"
+      - "network_devices"
+      - "cloud_services"
+    time_to_discovery_days: 1
+    
+  # Lost and Stolen Assets
+  lost_stolen_assets:
+    description: "Physical theft or loss of devices containing sensitive data"
+    base_score: 4.8
+    indicators:
+      - "device_theft"
+      - "mobile_device_loss"
+      - "laptop_theft"
+      - "removable_media_loss"
+    common_assets:
+      - "mobile_devices"
+      - "laptops"
+      - "removable_media"
+    time_to_discovery_days: 3
+    
+  # Miscellaneous Errors
+  miscellaneous_errors:
+    description: "Unintentional actions that result in data exposure"
+    base_score: 3.2
+    indicators:
+      - "misconfiguration"
+      - "programming_error"
+      - "misdelivery"
+      - "disposal_error"
+      - "publishing_error"
+    common_assets:
+      - "databases"
+      - "cloud_storage"
+      - "email_systems"
+    time_to_discovery_days: 45
+    
+  # Privilege Misuse
+  privilege_misuse:
+    description: "Authorized individuals abusing their legitimate access"
+    base_score: 6.0
+    indicators:
+      - "data_exfiltration"
+      - "unauthorized_access"
+      - "privilege_abuse"
+      - "unapproved_usage"
+    common_assets:
+      - "databases"
+      - "file_servers"
+      - "user_devices"
+    time_to_discovery_days: 85
+    
+  # Everything Else
+  everything_else:
+    description: "Incidents that don't fit into other established patterns"
+    base_score: 5.0
+    indicators:
+      - "unknown_vector"
+      - "multiple_vectors"
+      - "novel_technique"
+    common_assets:
+      - "various"
+    time_to_discovery_days: 30
+
+# Threat Actor Classifications
+threat_actors:
+  external:
+    organized_crime: 
+      frequency: 55
+      sophistication: "high"
+      motivation: "financial"
+      
+    nation_state:
+      frequency: 12
+      sophistication: "very_high" 
+      motivation: "espionage"
+      
+    activist:
+      frequency: 4
+      sophistication: "medium"
+      motivation: "ideological"
+      
+  internal:
+    malicious_insider:
+      frequency: 8
+      sophistication: "medium"
+      motivation: "financial"
+      
+    unintentional_insider:
+      frequency: 21
+      sophistication: "low"
+      motivation: "none"
+
+# Industry-Specific Risk Adjustments (multipliers)
+industry_risk_multipliers:
+  financial: 1.3
+  healthcare: 1.4
+  government: 1.5
+  retail: 1.1
+  manufacturing: 1.0
+  education: 0.9
+  technology: 1.2
+
+# Asset Value Multipliers
+asset_criticality:
+  critical: 2.0
+  high: 1.5
+  medium: 1.0
+  low: 0.7
+
+# Time-based risk factors
+temporal_factors:
+  business_hours: 1.0
+  after_hours: 1.2
+  weekend: 1.3
+  holiday: 1.1 
