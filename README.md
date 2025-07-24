@@ -363,4 +363,52 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ⭐ **Star this repository if you find it helpful!**
 
-**Built with ❤️ for the cybersecurity community**
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  ██╗ ██████╗ ██╗   ██╗██████╗  ██████╗ ██╗   ██╗                           ║
+║  ██║██╔═══██╗╚██╗ ██╔╝██╔══██╗██╔═══██╗╚██╗ ██╔╝                           ║
+║  ██║██║   ██║ ╚████╔╝ ██████╔╝██║   ██║ ╚████╔╝                            ║
+║  ██║██║   ██║  ╚██╔╝  ██╔══██╗██║   ██║  ╚██╔╝                             ║
+║  ██║╚██████╔╝   ██║   ██████╔╝╚██████╔╝   ██║                              ║
+║  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝  ╚═════╝    ╚═╝                              ║
+║                                                                              ║
+║  [+] Cyber-SOC Auto-Responder v2.0 - Local LLM Edition                      ║
+║  [+] Advanced AI-Powered Security Operations Center                          ║
+║  [+] Real-time Threat Detection & Automated Response                         ║
+║                                                                              ║
+║  [*] Author: JOYBOY                                                          ║
+║  [*] Stack: Python + Local LLM + Open Source Security Tools                 ║
+║  [*] Mission: Democratize AI-powered cybersecurity for everyone             ║
+║                                                                              ║
+║  [!] "Security through intelligence, not obscurity"                          ║
+║                                                                              ║
+║  $ whoami                                                                    ║
+║  > JOYBOY - Cybersecurity Engineer & AI Enthusiast                          ║
+║                                                                              ║
+║  $ cat /proc/skills                                                          ║
+║  > Python Development, AI/ML, Cybersecurity, SIEM/SOAR                      ║
+║  > Threat Hunting, Incident Response, Open Source Intelligence              ║
+║                                                                              ║
+║  $ echo $MOTTO                                                               ║
+║  > "Empowering defenders with AI-driven automation"                          ║
+║                                                                              ║
+║  [*] Connect:                                                                ║
+║      📧 Email: Available on GitHub Profile                                   ║
+║      🐙 GitHub: @eminemahjoub                                                ║
+║      🔗 LinkedIn: Available on GitHub Profile                               ║
+║                                                                              ║
+║  [*] Special Thanks:                                                         ║
+║      🤖 Claude Sonnet (AI Pair Programming Partner)                         ║
+║      🌐 Open Source Community                                                ║
+║      🛡️ Cybersecurity Researchers Worldwide                                 ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+**Built with ❤️ for the cybersecurity community by JOYBOY**
+
+```bash
+# Stay vigilant, stay secure! 🛡️
+echo "The best defense is a good AI-powered offense" | figlet
+```
