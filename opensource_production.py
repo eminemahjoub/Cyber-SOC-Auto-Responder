@@ -16,6 +16,9 @@ import random
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
+import json
+from agents.triage_agent import local_llm_response
+from config.dbir_patterns import DBIRPatterns
 
 # Setup logging
 logging.basicConfig(
@@ -479,6 +482,81 @@ class OpenSourceResponseAgent:
             "message": "Wazuh active response executed",
             "actions": ["log_analysis", "alert_correlation", "agent_notification"]
         }
+
+class LLMOpenSourceTriageAgent:
+    """LLM-powered triage agent using local LLM for advanced analysis."""
+    def __init__(self, dbir_patterns=None, log_file="llm_triage_audit.jsonl"):
+        self.dbir_patterns = dbir_patterns or DBIRPatterns()
+        self.log_file = log_file
+
+    def build_prompt(self, alert: dict) -> str:
+        dbir_patterns_list = list(self.dbir_patterns.patterns.keys())
+        prompt = (
+            "You are a cyber security triage AI.\n"
+            "Analyze the following alert and DBIR threat patterns.\n"
+            "Alert (JSON):\n" + json.dumps(alert, indent=2) + "\n"
+            "DBIR Patterns: " + ", ".join([p.value for p in dbir_patterns_list]) + "\n"
+            "Return a JSON with: severity_score (0-10), threat_pattern, and response_suggestion."
+        )
+        return prompt
+
+    def log_audit(self, alert_id, prompt, response):
+        entry = {
+            "alert_id": alert_id,
+            "prompt": prompt,
+            "response": response
+        }
+        with open(self.log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry) + "\n")
+
+    def parse_llm_response(self, response_text: str) -> dict:
+        import re
+        import json
+        # Try to extract JSON from the response
+        match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except Exception:
+                pass
+        # Fallback: try to extract fields manually
+        result = {}
+        score_match = re.search(r'severity_score\s*[:=\-]?\s*(\d+(?:\.\d+)?)', response_text)
+        if score_match:
+            result["severity_score"] = float(score_match.group(1))
+        pattern_match = re.search(r'threat_pattern\s*[:=\-]?\s*([\w_ ]+)', response_text)
+        if pattern_match:
+            result["threat_pattern"] = pattern_match.group(1).strip()
+        suggestion_match = re.search(r'response_suggestion\s*[:=\-]?\s*(.+)', response_text)
+        if suggestion_match:
+            result["response_suggestion"] = suggestion_match.group(1).strip()
+        return result
+
+    def analyze_alert(self, alert: dict) -> dict:
+        prompt = self.build_prompt(alert)
+        try:
+            response_text = local_llm_response(prompt)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+        self.log_audit(alert.get("id", "unknown"), prompt, response_text)
+        parsed = self.parse_llm_response(response_text)
+        return {"success": True, "llm_response": response_text, "parsed": parsed}
+
+# Test function for LLM triage
+if __name__ == "__main__":
+    agent = LLMOpenSourceTriageAgent()
+    sample_alert = {
+        "id": "llm-test-001",
+        "title": "Suspicious login detected",
+        "rule_level": 10,
+        "severity": "high",
+        "user": "root",
+        "category": "authentication",
+        "host": "test-host",
+        "agent_name": "test-agent"
+    }
+    result = agent.analyze_alert(sample_alert)
+    print("LLM AI Triage Result:", result)
 
 async def main():
     """Main entry point for open-source SOC."""

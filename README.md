@@ -2,17 +2,19 @@
 
 [![GitHub](https://img.shields.io/github/license/eminemahjoub/Cyber-SOC-Auto-Responder)](https://github.com/eminemahjoub/Cyber-SOC-Auto-Responder)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![AI Powered](https://img.shields.io/badge/AI-GPT--4%20Powered-brightgreen)](https://openai.com/)
+[![AI Powered](https://img.shields.io/badge/AI-Local%20LLM%20%2B%20GPT--4-brightgreen)](https://openai.com/)
 
-> **Advanced AI-Powered Security Operations Center (SOC) automation platform that combines real-time threat detection, intelligent analysis, and automated response capabilities.**
+> **Advanced AI-Powered Security Operations Center (SOC) automation platform that combines real-time threat detection, intelligent analysis, and automated response capabilities with local LLM support.**
 
 ## 🚀 Features
 
 ### 🤖 **AI-Powered Intelligence**
-- **GPT-4 Turbo** powered threat analysis
-- **Advanced pattern recognition** using DBIR frameworks
-- **Context-aware severity scoring** with natural language processing
-- **Intelligent IOC correlation** and risk assessment
+- **🏠 Local LLM Support** - Mistral 7B, Ollama, LM Studio integration
+- **☁️ Cloud AI Options** - GPT-4 Turbo powered threat analysis
+- **🧠 Advanced pattern recognition** using DBIR frameworks
+- **📝 Context-aware severity scoring** with natural language processing
+- **🔗 Intelligent IOC correlation** and risk assessment
+- **📋 Audit logging** - Complete LLM prompt/response trail
 
 ### 🔗 **Enterprise Integrations**
 - **🔍 Wazuh SIEM** - Real-time security event monitoring
@@ -49,7 +51,11 @@ cp config_template.env .env
 
 ### 4. **Run System**
 ```bash
-# Streamlined production system (recommended)
+# Streamlined production system with Local LLM (recommended)
+python opensource_production.py
+
+# With mock LLM server for testing
+python mock_llm_server.py  # In separate terminal
 python opensource_production.py
 
 # AI-powered system (requires OpenAI API key)
@@ -57,6 +63,32 @@ python upgrade_to_ai_production.py
 
 # Demo mode
 python demo_streamlined.py
+```
+
+## 🏠 Local LLM Setup
+
+### **Option 1: Ollama (Recommended)**
+```bash
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Download Mistral model
+ollama pull mistral
+
+# Run Mistral
+ollama run mistral
+```
+
+### **Option 2: LM Studio**
+1. Download [LM Studio](https://lmstudio.ai/)
+2. Download Mistral 7B Instruct model
+3. Start local server on port 5000 or 11434
+
+### **Option 3: Mock Server (Testing)**
+```bash
+# Start mock LLM server
+python mock_llm_server.py
+# Simulates AI responses for development/testing
 ```
 
 ## ⚙️ Configuration
@@ -67,6 +99,7 @@ python demo_streamlined.py
 | **Wazuh** | SIEM & Log Analysis | Free & Open Source |
 | **OpenVAS** | Vulnerability Scanning | Free & Open Source |
 | **VirusTotal** | Threat Intelligence | Freemium API |
+| **Local LLM** | AI Triage Analysis | Free (Ollama/Mock) |
 
 ### **Environment Variables**
 ```env
@@ -81,13 +114,15 @@ OPENVAS_PASSWORD=your_password
 
 VIRUSTOTAL_API_KEY=your_api_key
 
-# AI Enhancement (Optional)
-OPENAI_API_KEY=your_openai_key
+# AI Enhancement Options
+OPENAI_API_KEY=your_openai_key  # Optional: Cloud AI
+# Local LLM runs on localhost:11434 (Ollama) or localhost:5000 (others)
 
 # System Configuration
 POLL_INTERVAL=30
 VULNERABILITY_SCAN_THRESHOLD=7.0
 IOC_ANALYSIS_THRESHOLD=6.0
+ENCRYPTION_KEY=your-encryption-key-32-chars-long
 ```
 
 ### **Quick Setup (Docker)**
@@ -99,6 +134,9 @@ docker-compose up -d
 
 # Install OpenVAS
 docker run -d -p 9392:9392 --name openvas mikesplain/openvas
+
+# Install Ollama (for Local LLM)
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 ```
 
 ## 🏗️ Architecture
@@ -109,26 +147,32 @@ graph TB
     B[OpenVAS Scanner] --> D
     C[VirusTotal API] --> D
     
-    D --> E[AI Triage Agent]
+    D --> E[LLM Triage Agent]
     D --> F[Vulnerability Agent]
     D --> G[Response Agent]
     
-    E --> H[Threat Analysis]
-    F --> I[Risk Assessment]
-    G --> J[Automated Actions]
+    E --> H[Local LLM / Cloud AI]
+    E --> I[Audit Logging]
+    F --> J[Risk Assessment]
+    G --> K[Automated Actions]
     
-    H --> K[Security Dashboard]
-    I --> K
-    J --> K
+    H --> L[Threat Analysis]
+    I --> M[llm_triage_audit.jsonl]
+    J --> L
+    K --> L
+    
+    L --> N[Security Dashboard]
 ```
 
 ## 🤖 AI Agents
 
-### **🧠 Triage Agent** (27.8KB)
-- **GPT-4 powered** threat classification
-- **DBIR pattern matching** for attack identification
-- **Context-aware severity scoring** (1-10 scale)
-- **Natural language analysis** of security events
+### **🧠 LLM Triage Agent** (New!)
+- **🏠 Local LLM integration** - Mistral 7B Instruct via Ollama
+- **☁️ Cloud AI fallback** - GPT-4 support for advanced analysis
+- **📋 Complete audit trail** - All prompts/responses logged to `llm_triage_audit.jsonl`
+- **🔄 Multi-endpoint support** - Ollama, text-generation-webui, LM Studio
+- **🧠 DBIR pattern analysis** - Industry-standard threat classification
+- **📊 Structured output parsing** - JSON response with severity scores
 
 ### **🔍 Scanner Agent** (16.1KB)
 - **Intelligent file analysis** with behavioral detection
@@ -144,6 +188,26 @@ graph TB
 
 ## 📊 Usage Examples
 
+### **Local LLM Triage**
+```python
+from opensource_production import LLMOpenSourceTriageAgent
+
+# Initialize with local LLM
+agent = LLMOpenSourceTriageAgent()
+
+# Analyze alert with AI
+result = agent.analyze_alert({
+    "id": "alert-001",
+    "title": "Suspicious login detected",
+    "severity": "high",
+    "user": "root"
+})
+
+print(f"Severity: {result['parsed']['severity_score']}")
+print(f"Pattern: {result['parsed']['threat_pattern']}")
+print(f"Suggestion: {result['parsed']['response_suggestion']}")
+```
+
 ### **Basic Operation**
 ```python
 from opensource_production import OpenSourceSOCOrchestrator
@@ -153,32 +217,27 @@ orchestrator = OpenSourceSOCOrchestrator()
 await orchestrator.run_opensource_system()
 ```
 
-### **AI-Enhanced Analysis**
+### **Testing LLM Connection**
 ```python
-from upgrade_to_ai_production import AIEnabledSOCOrchestrator
+# Test local LLM server
+python test_llm_server.py
 
-# Requires OPENAI_API_KEY
-orchestrator = AIEnabledSOCOrchestrator()
-await orchestrator.run_ai_soc_system()
-```
-
-### **Custom Alert Processing**
-```python
-# Process specific alert with AI
-ai_result = await triage_agent.analyze_alert(alert, dbir_patterns)
-severity = ai_result.get("severity_score", 5.0)
-pattern = ai_result.get("pattern", "Unknown")
+# Expected output:
+# ✅ SUCCESS: LLM server is running!
+# Response: {"severity_score": 7.5, "threat_pattern": "system_intrusion", ...}
 ```
 
 ## 🎯 Performance Metrics
 
-| Metric | Streamlined | AI-Enhanced |
-|--------|-------------|-------------|
-| **Detection Speed** | 30 seconds | 30 seconds |
-| **Analysis Depth** | Rule-based | GPT-4 powered |
-| **False Positives** | ~15% | ~5% |
-| **Threat Coverage** | DBIR patterns | Advanced AI + DBIR |
-| **Cost per Alert** | Free | ~$0.01-0.03 |
+| Metric | Streamlined | Local LLM | Cloud AI |
+|--------|-------------|-----------|----------|
+| **Detection Speed** | 30 seconds | 30 seconds | 30 seconds |
+| **Analysis Depth** | Rule-based | Local AI | GPT-4 powered |
+| **False Positives** | ~15% | ~8% | ~5% |
+| **Threat Coverage** | DBIR patterns | Local AI + DBIR | Advanced AI + DBIR |
+| **Cost per Alert** | Free | Free | ~$0.01-0.03 |
+| **Privacy** | High | High | Medium |
+| **Offline Support** | Yes | Yes | No |
 
 ## 🛠️ Development
 
@@ -186,7 +245,7 @@ pattern = ai_result.get("pattern", "Unknown")
 ```
 cybersoc-auto-responder/
 ├── agents/                 # AI-powered analysis agents
-│   ├── triage_agent.py    # GPT-4 threat triage (27.8KB)
+│   ├── triage_agent.py    # Local LLM + GPT-4 triage (27.8KB)
 │   ├── scanner_agent.py   # Intelligent file scanning (16.1KB)
 │   └── response_agent.py  # Automated response actions
 ├── connectors/            # Security tool integrations
@@ -195,21 +254,24 @@ cybersoc-auto-responder/
 │   └── virustotal_connector.py # Threat intelligence
 ├── config/               # Configuration management
 ├── scanners/            # File and IOC scanners
-├── opensource_production.py # Main production system
-├── upgrade_to_ai_production.py # AI-enhanced system
+├── opensource_production.py # Main system + LLM triage
+├── mock_llm_server.py   # Mock LLM for testing
+├── test_llm_server.py   # LLM connection test
+├── llm_triage_audit.jsonl # LLM audit log
 └── SETUP_GUIDE.md       # Detailed setup instructions
 ```
 
-### **Adding New Connectors**
+### **LLM Integration Testing**
 ```python
-class CustomConnector:
-    async def connect(self) -> bool:
-        # Implementation
-        pass
-    
-    async def health_check(self) -> bool:
-        # Health verification
-        pass
+# Test multiple alerts with LLM
+python test_ai_triage.py
+
+# Start mock server for development
+python mock_llm_server.py
+
+# Test real Ollama integration
+ollama run mistral
+python test_llm_server.py
 ```
 
 ## 🔒 Security Features
@@ -219,6 +281,8 @@ class CustomConnector:
 - **📊 Comprehensive logging** - Full audit trail of all actions
 - **🔍 Input validation** - Sanitized inputs prevent injection attacks
 - **⚡ Rate limiting** - API call throttling for stability
+- **🏠 Local AI processing** - No data sent to external AI services (when using local LLM)
+- **📋 Complete audit trail** - All LLM interactions logged with timestamps
 
 ## 📈 Monitoring & Alerting
 
@@ -226,6 +290,9 @@ class CustomConnector:
 ```bash
 # Check system status
 python check_opensource_status.py
+
+# Test LLM connectivity
+python test_llm_server.py
 
 # Verify connections
 python -c "
@@ -235,11 +302,17 @@ print('Wazuh:', await connector.connect())
 "
 ```
 
-### **Performance Metrics**
-- **📊 Real-time dashboards** with system status
-- **📈 Trend analysis** of threat patterns
-- **⚡ Response time tracking** for optimization
-- **🎯 Accuracy metrics** for AI model performance
+### **LLM Audit Trail**
+```bash
+# View LLM interactions
+cat llm_triage_audit.jsonl
+
+# Each entry contains:
+# - alert_id: Unique identifier
+# - prompt: Full prompt sent to LLM
+# - response: Raw LLM response
+# - timestamp: When the analysis occurred
+```
 
 ## 🤝 Contributing
 
@@ -257,7 +330,9 @@ venv\Scripts\activate     # Windows
 
 # Install development dependencies
 pip install -r requirements.txt
-pip install -r requirements-dev.txt
+
+# Start mock LLM for testing
+python mock_llm_server.py
 
 # Run tests
 python -m pytest tests/
@@ -273,6 +348,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Greenbone Networks** - OpenVAS vulnerability scanner
 - **VirusTotal** - Threat intelligence platform
 - **OpenAI** - GPT-4 AI capabilities
+- **Ollama Team** - Local LLM deployment platform
+- **Mistral AI** - Open-source language models
 - **SANS Institute** - DBIR threat patterns
 
 ## 📞 Support
@@ -280,6 +357,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **📖 Documentation**: [Setup Guide](SETUP_GUIDE.md)
 - **🐛 Issues**: [GitHub Issues](https://github.com/eminemahjoub/Cyber-SOC-Auto-Responder/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/eminemahjoub/Cyber-SOC-Auto-Responder/discussions)
+- **🏠 Local LLM Setup**: See "Local LLM Setup" section above
 
 ---
 

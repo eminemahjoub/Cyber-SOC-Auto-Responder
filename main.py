@@ -14,7 +14,8 @@ which uses WazuhConnector, OpenVASConnector, and VirusTotalConnector only.
 
 # The main entry point now uses opensource_production.py
 from opensource_production import main
-
+from dotenv import load_dotenv
+load_dotenv()
 if __name__ == "__main__":
     # Redirect to the open-source production system
     print("🔄 Redirecting to Open-Source Production System...")

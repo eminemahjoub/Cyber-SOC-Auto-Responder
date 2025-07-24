@@ -11,10 +11,54 @@ import time
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
 
+import requests
+import json
+
 from config.logger_config import get_logger, log_alert_processing
 from config.dbir_patterns import DBIRPatterns, IncidentPattern, ThreatActorType
 
 logger = get_logger(__name__)
+
+def local_llm_response(prompt: str) -> str:
+    """
+    Send a prompt to the local LLM REST API and return the raw response text.
+    Args:
+        prompt: The prompt string to send to the model.
+    Returns:
+        The raw response text from the model.
+    Raises:
+        RuntimeError: If the model is unreachable or returns an error.
+    """
+    # Try Ollama endpoint first (most common)
+    url = "http://localhost:11434/api/generate"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "model": "mistral",
+        "prompt": prompt,
+        "stream": False
+    }
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("response", "")
+    except requests.RequestException:
+        # Fallback to text-generation-webui endpoint
+        url = "http://localhost:5000/api/v1/generate"
+        payload = {
+            "prompt": prompt,
+            "max_new_tokens": 512,
+            "temperature": 0.1
+        }
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("results", [{}])[0].get("text", "")
+        except requests.RequestException as e:
+            raise RuntimeError(f"Failed to connect to local LLM (tried Ollama and text-generation-webui): {e}")
+    except (ValueError, KeyError) as e:
+        raise RuntimeError(f"Malformed response from local LLM: {e}")
 
 class TriageAgent:
     """

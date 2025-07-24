@@ -77,11 +77,23 @@ class Settings:
         self.config_dir = config_dir
         self.yaml_config = self._load_yaml_config()
         
-        # Initialize all settings
-        self.splunk = SplunkSettings()
-        self.crowdstrike = CrowdStrikeSettings()
-        self.thehive = TheHiveSettings()
-        self.openai = OpenAISettings()
+        # Initialize all settings, making Splunk, CrowdStrike, and TheHive optional
+        try:
+            self.splunk = SplunkSettings()
+        except Exception:
+            self.splunk = None
+        try:
+            self.crowdstrike = CrowdStrikeSettings()
+        except Exception:
+            self.crowdstrike = None
+        try:
+            self.thehive = TheHiveSettings()
+        except Exception:
+            self.thehive = None
+        try:
+            self.openai = OpenAISettings()
+        except Exception:
+            self.openai = None
         self.yara = YaraSettings()
         self.logging = LoggingSettings()
         self.alerts = AlertSettings()
